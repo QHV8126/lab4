@@ -158,6 +158,12 @@ FROM LineasPedido
 GROUP BY LineasPedido.productoId;
 
 -- produtos más populares de cada tipo
-SELECT Pedidos.productoId, SUM(LineasPedido.unidades)
-FROM Pedidos
-GROUP BY LineasPedido.productoId;
+SELECT Productos.nombre as producto, TiposProducto.nombre as tipo, MAX(vendidos)
+FROM ( -- produce una vista
+    SELECT Pedidos.productoId, SUM(LineasPedido.unidades) as vendidos
+    FROM LineasPedido
+    GROUP BY LineasPedido.productoId
+    ) as ventas
+    JOIN Producto ON ventas.productoId = Producto.id 
+    JOIN TiposProducto ON TiposProducto.id = Producto.tipoProductoId
+GROUP BY TiposProducto.nombre;
